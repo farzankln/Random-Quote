@@ -1,12 +1,33 @@
-# React + Vite
+## Random Quote Generator
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# About the Project
 
-Currently, two official plugins are available:
+This is a simple Random Quote Generator built with React and Tailwind CSS. It fetches random quotes from an API and allows users to save their favorite quotes.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+# Features
 
-## Expanding the ESLint configuration
+- Fetches random quotes from the Quotable API.
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Displays quotes in a beautiful UI.
+
+- Allows users to mark/unmark quotes as favorites.
+
+- Saves the last fetched quote in local storage.
+
+- Responsive design for mobile and desktop.
+
+# Technologies Used
+
+- React - Frontend framework
+
+- Tailwind CSS - Styling
+
+- Axios - HTTP requests
+
+- React Icons - Icons for UI
+
+- LocalStorage - To store favorite quotes
+
+# License
+
+This project is open-source and available under the [MIT License](LICENSE).
