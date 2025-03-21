@@ -1,56 +1,53 @@
-import useFavorites from "./useFavorites";
-import { LuSquareArrowOutUpRight } from "react-icons/lu";
-import { FaRegHeart, FaHeart } from "react-icons/fa";
-import Loader from "./Loader";
+import { useState, useEffect, useCallback } from "react";
+import axios from "axios";
 
-const QuoteCard = ({ quote, author, loading }) => {
-  const { favorites, toggleFavorite } = useFavorites();
-  const isFavorite = favorites.some((fav) => fav.content === quote);
+const useFetchQuote = () => {
+  const [quote, setQuote] = useState(() => {
+    const savedQuote = localStorage.getItem("quote");
+    return savedQuote ? JSON.parse(savedQuote) : { content: "", author: "" };
+  });
 
-  return (
-    <div
-      className={`bg-neutral-900 shadow-lg rounded-lg p-4 mx-auto w-full h-full flex flex-col space-y-4 
-        ${loading ? "justify-center" : "justify-between"}`}
-    >
-      {loading ? (
-        <div className="flex justify-center items-center h-20">
-          <Loader />
-        </div>
-      ) : (
-        <>
-          <div className="h-full flex items-center justify-center text-center">
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold text-gray-200 max-h-56 overflow-y-auto scrollbar-hidden">
-              "{quote}"
-            </p>
-          </div>
-          <div className="flex justify-between items-center text-xs md:text-base">
-            <a
-              href={`https://en.wikipedia.org/wiki/${author}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-400 flex justify-center items-center gap-1.5 transition-transform hover:scale-105 active:scale-95"
-            >
-              - {author}
-              <LuSquareArrowOutUpRight size={13} />
-            </a>
-            <button
-              onClick={() => toggleFavorite({ content: quote, author })}
-              className="transition-transform hover:scale-110 active:scale-95 rounded-full cursor-pointer"
-            >
-              {isFavorite ? (
-                <FaHeart size={20} className="text-red-500" />
-              ) : (
-                <FaRegHeart
-                  size={20}
-                  className="text-gray-500 hover:text-red-500"
-                />
-              )}
-            </button>
-          </div>
-        </>
-      )}
-    </div>
-  );
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const fetchRandomQuote = useCallback(async () => {
+    setLoading(true);
+    setError("");
+
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    try {
+      const response = await axios.get("https://api.quotable.io/random", {
+        signal,
+      });
+      const newQuote = {
+        content: response.data.content || "No quote available",
+        author: response.data.author || "Unknown",
+      };
+
+      setTimeout(() => {
+        setQuote(newQuote);
+        localStorage.setItem("quote", JSON.stringify(newQuote));
+        setLoading(false);
+      }, 500);
+    } catch (err) {
+      if (axios.isCancel(err)) return;
+      setError("Failed to fetch quote. Please try again.");
+      setQuote({ content: "No quote available", author: "Unknown" });
+      setLoading(false);
+    }
+
+    return () => controller.abort();
+  }, []);
+
+  useEffect(() => {
+    if (!quote.content) {
+      fetchRandomQuote();
+    }
+  }, [quote.content, fetchRandomQuote]);
+
+  return { quote, loading, error, fetchRandomQuote };
 };
 
-export default QuoteCard;
+export default useFetchQuote;

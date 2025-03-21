@@ -1,50 +1,42 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 
 const useFetchQuote = () => {
   const [quote, setQuote] = useState(() => {
     const savedQuote = localStorage.getItem("quote");
-    return savedQuote ? JSON.parse(savedQuote) : null;
+    return savedQuote ? JSON.parse(savedQuote) : { content: "", author: "" };
   });
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const fetchRandomQuote = async () => {
+  const fetchRandomQuote = useCallback(async () => {
     setLoading(true);
     setError("");
 
-    const controller = new AbortController();
-    const signal = controller.signal;
-
     try {
-      const response = await axios.get("https://api.quotable.io/random", {
-        signal,
-      });
+      const response = await axios.get("https://api.quotable.io/random");
       const newQuote = {
-        content: response.data.content,
-        author: response.data.author,
+        content: response.data.content || "No quote available",
+        author: response.data.author || "Unknown",
       };
 
-      setTimeout(() => {
-        setQuote(newQuote);
-        localStorage.setItem("quote", JSON.stringify(newQuote));
-        setLoading(false);
-      }, 500);
+      setQuote(newQuote);
+      localStorage.setItem("quote", JSON.stringify(newQuote));
+      setLoading(false);
     } catch (err) {
-      if (axios.isCancel(err)) return;
+      console.error("Error fetching quote:", err);
       setError("Failed to fetch quote. Please try again.");
+      setQuote({ content: "No quote available", author: "Unknown" });
       setLoading(false);
     }
-
-    return () => controller.abort(); 
-  };
+  }, []);
 
   useEffect(() => {
-    if (!quote) {
+    if (!quote.content) {
       fetchRandomQuote();
     }
-  }, []);
+  }, [quote, fetchRandomQuote]);
 
   return { quote, loading, error, fetchRandomQuote };
 };
