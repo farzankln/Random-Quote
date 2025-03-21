@@ -6,6 +6,7 @@ import Loader from "./Loader";
 const QuoteCard = ({ quote, author, loading }) => {
   const { favorites, toggleFavorite } = useFavorites();
   const isFavorite = favorites.some((fav) => fav.content === quote);
+  if (!quote) return <p className="text-gray-200">No quote available</p>;
 
   return (
     <div
@@ -30,7 +31,7 @@ const QuoteCard = ({ quote, author, loading }) => {
               rel="noopener noreferrer"
               className="text-gray-400 flex justify-center items-center gap-1.5 transition-transform hover:scale-105 active:scale-95"
             >
-              - {author}
+              - {author || "Unknown"}
               <LuSquareArrowOutUpRight size={13} />
             </a>
             <button

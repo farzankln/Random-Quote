@@ -4,7 +4,9 @@ import axios from "axios";
 const useFetchQuote = () => {
   const [quote, setQuote] = useState(() => {
     const savedQuote = localStorage.getItem("quote");
-    return savedQuote ? JSON.parse(savedQuote) : null;
+    return savedQuote
+      ? JSON.parse(savedQuote)
+      : { content: "", author: "Unknown" };
   });
 
   const [loading, setLoading] = useState(false);
@@ -18,7 +20,9 @@ const useFetchQuote = () => {
     const signal = controller.signal;
 
     try {
-      const response = await axios.get("https://api.quotable.io/random", { signal });
+      const response = await axios.get("https://api.quotable.io/random", {
+        signal,
+      });
       const newQuote = {
         content: response.data.content,
         author: response.data.author,
@@ -39,7 +43,7 @@ const useFetchQuote = () => {
   };
 
   useEffect(() => {
-    if (!quote) {
+    if (!quote || !quote.content) {
       fetchRandomQuote();
     }
   }, []);
