@@ -1,10 +1,10 @@
-## Random Quote Generator
+# Random Quote Generator
 
-# About the Project
+## About the Project
 
 This is a simple Random Quote Generator built with React and Tailwind CSS. It fetches random quotes from an API and allows users to save their favorite quotes.
 
-# Features
+## Features
 
 - Fetches random quotes from the Quotable API.
 
@@ -16,7 +16,7 @@ This is a simple Random Quote Generator built with React and Tailwind CSS. It fe
 
 - Responsive design for mobile and desktop.
 
-# Technologies Used
+## Technologies Used
 
 - React - Frontend framework
 
@@ -28,6 +28,6 @@ This is a simple Random Quote Generator built with React and Tailwind CSS. It fe
 
 - LocalStorage - To store favorite quotes
 
-# License
+## License
 
 This project is open-source and available under the [MIT License](LICENSE).
