@@ -4,6 +4,7 @@ import useFavorites from "./useFavorites";
 import { Link } from "react-router-dom";
 import { HiOutlineArrowLeft } from "react-icons/hi";
 import { TiDeleteOutline } from "react-icons/ti";
+import { LuSquareArrowOutUpRight } from "react-icons/lu";
 
 const Favorites = () => {
   const { favorites, toggleFavorite } = useFavorites();
@@ -29,8 +30,15 @@ const Favorites = () => {
                 className="bg-neutral-900 rounded-md p-2 gap-2 flex justify-between items-start"
               >
                 <div>
-                  <p className="text-gray-200">"{fav.content}"</p>
-                  <span className="text-sm text-gray-400">- {fav.author}</span>
+                  <p className="text-gray-200 mb-1">"{fav.content}"</p>
+                  <a
+                    href={`https://en.wikipedia.org/wiki/${fav.author}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-gray-400 flex items-center gap-1.5 cursor-pointer"
+                  >
+                    - {fav.author} <LuSquareArrowOutUpRight size={13} />
+                  </a>
                 </div>
                 <button
                   onClick={() => toggleFavorite(fav)}
@@ -52,9 +60,9 @@ const Favorites = () => {
           </div>
         ) : (
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-            <p className="text-gray-600 text-center md:text-lg">
+            <p className="text-gray-200 text-center md:text-lg">
               No favorite quotes yet.{" "}
-              <Link to="/" className="text-blue-500 hover:underline">
+              <Link to="/" className="text-blue-400 hover:underline">
                 Add some!
               </Link>
             </p>

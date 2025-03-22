@@ -39,7 +39,7 @@ const useFetchQuote = () => {
       setLoading(false);
     }
 
-    return () => controller.abort(); // لغو درخواست در صورت خروج از صفحه
+    return () => controller.abort();
   };
 
   useEffect(() => {
