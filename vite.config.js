@@ -8,7 +8,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api/quote": {
-        target: "http://api.quotable.io",
+        target: "https://api.quotable.io",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/quote/, "/random"),
       },
