@@ -16,30 +16,22 @@ const useFetchQuote = () => {
     setLoading(true);
     setError("");
 
-    const controller = new AbortController();
-    const signal = controller.signal;
-
     try {
-      const response = await axios.get("/api/quote", {
-        signal,
-      });
+      const response = await axios.get("https://zenquotes.io/api/random");
       const newQuote = {
-        content: response.data.content,
-        author: response.data.author,
+        content: response.data[0].q, 
+        author: response.data[0].a, 
       };
 
-      setTimeout(() => {
-        setQuote(newQuote);
-        localStorage.setItem("quote", JSON.stringify(newQuote));
-        setLoading(false);
-      }, 500);
+      setQuote(newQuote);
+      localStorage.setItem("quote", JSON.stringify(newQuote));
     } catch (err) {
-      if (axios.isCancel(err)) return;
+      console.log(err);
+      
       setError("Failed to fetch quote. Please try again.");
+    } finally {
       setLoading(false);
     }
-
-    return () => controller.abort();
   };
 
   useEffect(() => {
