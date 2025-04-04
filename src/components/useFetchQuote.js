@@ -43,7 +43,7 @@ const useFetchQuote = () => {
   };
 
   useEffect(() => {
-    if (!quote || !quote.content) {
+    if (!localStorage.getItem("quote")) {
       fetchRandomQuote();
     }
   }, []);
