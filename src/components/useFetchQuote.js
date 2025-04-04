@@ -20,7 +20,7 @@ const useFetchQuote = () => {
     const signal = controller.signal;
 
     try {
-      const response = await axios.get("https://api.quotable.io/random", {
+      const response = await axios.get("http://api.quotable.io/random", {
         signal,
       });
       const newQuote = {
