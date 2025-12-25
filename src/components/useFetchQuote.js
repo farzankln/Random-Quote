@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { diagnosticManager } from "../utils/diagnostics.jsx";
+import { diagnosticManager } from "../utils/diagnosticManager.js";
 
 const useFetchQuote = () => {
   const [quote, setQuote] = useState(() => {
