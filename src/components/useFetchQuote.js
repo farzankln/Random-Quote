@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { diagnosticManager } from "../utils/diagnostics.jsx";
 
 const useFetchQuote = () => {
   const [quote, setQuote] = useState(() => {
@@ -17,18 +18,52 @@ const useFetchQuote = () => {
     setError("");
 
     try {
-      const response = await axios.get("https://zenquotes.io/api/random");
-      const newQuote = {
-        content: response.data[0].q, 
-        author: response.data[0].a, 
-      };
+      // Test network connectivity first
+      const connectivityTest = await diagnosticManager.testEndpoint(
+        "https://dummyjson.com/quotes/random",
+        true
+      );
 
-      setQuote(newQuote);
-      localStorage.setItem("quote", JSON.stringify(newQuote));
+      if (connectivityTest.status === "failed") {
+        throw new Error(
+          `Network connectivity failed: ${connectivityTest.errorMessage} (${connectivityTest.responseTime}ms timeout)`
+        );
+      }
+
+      const response = await axios.get("https://dummyjson.com/quotes/random");
+
+      // Fix: API returns a single object with 'quote' property, not 'content'
+      if (response.data && response.data.quote && response.data.author) {
+        const newQuote = {
+          content: response.data.quote,
+          author: response.data.author,
+        };
+
+        setQuote(newQuote);
+        localStorage.setItem("quote", JSON.stringify(newQuote));
+      } else {
+        throw new Error("Invalid API response format");
+      }
     } catch (err) {
-      console.log(err);
-      
-      setError("Failed to fetch quote. Please try again.");
+      // Enhanced error logging with diagnostics
+      const errorInfo = diagnosticManager.logError(err, {
+        component: "useFetchQuote",
+        function: "fetchRandomQuote",
+        apiEndpoint: "https://dummyjson.com/quotes/random",
+        attemptTime: new Date().toISOString(),
+      });
+
+      let errorMessage = "Failed to fetch quote. Please try again.";
+
+      if (errorInfo.type === "NETWORK_ERROR") {
+        errorMessage =
+          "Network connection failed. Please check your internet connection and try again.";
+      } else if (errorInfo.type === "TIMEOUT_ERROR") {
+        errorMessage =
+          "Request timed out. The quote service may be unavailable.";
+      }
+
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
