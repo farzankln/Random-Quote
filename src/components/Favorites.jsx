@@ -47,7 +47,7 @@ const Favorites = () => {
                 <div key={index} className="bg-neutral-900 rounded-md p-2 pb-1">
                   <div>
                     <p
-                      className={`text-gray-200 pb-2 mb-1 border-b border-gray-500 text-center ${
+                      className={`text-gray-200 pb-2 text-center ${
                         translation.quote ? "persian-text" : ""
                       }`}
                     >
@@ -62,7 +62,15 @@ const Favorites = () => {
 
                   <div className=" gap-2 flex justify-between items-center">
                     <a
-                      href={`https://en.wikipedia.org/wiki/${fav.author}`}
+                      href={
+                        translation.author
+                          ? `https://fa.wikipedia.org/wiki/${encodeURIComponent(
+                              translation.author
+                            )}`
+                          : `https://en.wikipedia.org/wiki/${encodeURIComponent(
+                              fav.author
+                            )}`
+                      }
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-sm text-gray-400 flex items-center justify-center gap-1.5 cursor-pointer"

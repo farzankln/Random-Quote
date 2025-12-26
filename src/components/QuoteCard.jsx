@@ -79,7 +79,17 @@ const QuoteCard = ({ quote, author, loading }) => {
           </div>
           <div className="flex justify-between items-center text-xs md:text-base">
             <a
-              href={quote ? `https://en.wikipedia.org/wiki/${author}` : "#"}
+              href={
+                quote
+                  ? translation.author
+                    ? `https://fa.wikipedia.org/wiki/${encodeURIComponent(
+                        translation.author
+                      )}`
+                    : `https://en.wikipedia.org/wiki/${encodeURIComponent(
+                        author
+                      )}`
+                  : "#"
+              }
               target="_blank"
               rel="noopener noreferrer"
               className={`text-gray-400 flex justify-center items-center gap-1.5 transition-transform hover:scale-105 active:scale-95 
