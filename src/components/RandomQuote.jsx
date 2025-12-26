@@ -19,7 +19,7 @@ const RandomQuote = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center w-full">
             <button
               onClick={fetchRandomQuote}
-              className="w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition text-sm md:text-base"
+              className="w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition cursor-pointer text-sm md:text-base"
               disabled={loading}
             >
               New Quote
@@ -27,7 +27,7 @@ const RandomQuote = () => {
 
             <Link
               to="/favorites"
-              className="w-full sm:w-auto px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-700 transition cursor-pointer text-sm md:text-base flex justify-center items-center"
+              className="w-full px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition cursor-pointer text-sm md:text-base "
             >
               Favorites
             </Link>

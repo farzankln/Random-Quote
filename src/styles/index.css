@@ -4,14 +4,14 @@
 .persian-text {
   font-family: "Vazir", "Tahoma", "Arial", sans-serif;
   direction: rtl;
-  text-align: right;
-  line-height: 1.8;
+  line-height: 1.7;
 }
 
 /* Custom scrollbar for better UX */
 .scrollbar-hidden {
   scrollbar-width: none;
   -ms-overflow-style: none;
+ 
 }
 
 .scrollbar-hidden::-webkit-scrollbar {

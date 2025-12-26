@@ -2,7 +2,7 @@ import useFavorites from "./useFavorites";
 import useTranslate from "../hooks/useTranslate";
 import { LuSquareArrowOutUpRight } from "react-icons/lu";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
-import { FaLanguage } from "react-icons/fa6";
+import { IoLanguage } from "react-icons/io5";
 import Loader from "./Loader";
 import { useEffect } from "react";
 
@@ -21,21 +21,18 @@ const QuoteCard = ({ quote, author, loading }) => {
   } = useTranslate();
   const isFavorite = favorites.some((fav) => fav.content === quote);
 
-  // Clear translation when quote changes
   useEffect(() => {
     if (!quote && (translation.quote || translation.author)) {
       clearTranslation();
     }
   }, [quote, translation, clearTranslation]);
 
-  // Auto-translate new quote and author if translation was previously enabled
   useEffect(() => {
     if (quote && !loading && isTranslationEnabled) {
       autoTranslateIfEnabled(quote, author);
     }
   }, [quote, author, loading, isTranslationEnabled, autoTranslateIfEnabled]);
 
-  // Determine if content should be shown
   const showContent = shouldShowContent();
   const showLoader = loading || (isTranslationEnabled && !isContentReady);
 
@@ -59,7 +56,11 @@ const QuoteCard = ({ quote, author, loading }) => {
           <div className="h-full flex items-center justify-center text-center">
             {showContent ? (
               <div className="space-y-2">
-                <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold text-gray-200 max-h-56 overflow-y-auto scrollbar-hidden persian-text">
+                <p
+                  className={`text-base sm:text-lg md:text-xl lg:text-2xl font-semibold text-gray-200 max-h-56 overflow-y-auto scrollbar-hidden ${
+                    translation.quote ? "persian-text" : ""
+                  }`}
+                >
                   "{translation.quote || quote}"
                 </p>
                 {translationError && (
@@ -106,8 +107,8 @@ const QuoteCard = ({ quote, author, loading }) => {
                 {isTranslating ? (
                   <Loader size="small" />
                 ) : (
-                  <FaLanguage
-                    size={18}
+                  <IoLanguage
+                    size={20}
                     className={`${
                       translation.quote || translation.author
                         ? "text-blue-500"

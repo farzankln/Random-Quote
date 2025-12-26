@@ -1,12 +1,10 @@
-// eslint-disable-next-line no-unused-vars
-import { motion } from "framer-motion";
 import useFavorites from "./useFavorites";
 import useFavoriteTranslations from "../hooks/useFavoriteTranslations";
 import { Link } from "react-router-dom";
 import { HiOutlineArrowLeft } from "react-icons/hi";
 import { TiDeleteOutline } from "react-icons/ti";
 import { LuSquareArrowOutUpRight } from "react-icons/lu";
-import { FaLanguage } from "react-icons/fa6";
+import { IoLanguage } from "react-icons/io5";
 import Loader from "./Loader";
 
 const Favorites = () => {
@@ -46,12 +44,13 @@ const Favorites = () => {
               };
 
               return (
-                <div
-                  key={index}
-                  className="bg-neutral-900 rounded-md p-2 gap-2 flex justify-between items-start"
-                >
-                  <div className="flex-1">
-                    <p className="text-gray-200 mb-1 persian-text">
+                <div key={index} className="bg-neutral-900 rounded-md p-2 pb-1">
+                  <div>
+                    <p
+                      className={`text-gray-200 pb-2 mb-1 border-b border-gray-500 text-center ${
+                        translation.quote ? "persian-text" : ""
+                      }`}
+                    >
                       "{translation.quote || fav.content}"
                     </p>
                     {translationError && (
@@ -59,53 +58,51 @@ const Favorites = () => {
                         {translationError}
                       </p>
                     )}
+                  </div>
+
+                  <div className=" gap-2 flex justify-between items-center">
                     <a
                       href={`https://en.wikipedia.org/wiki/${fav.author}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm text-gray-400 flex items-center gap-1.5 cursor-pointer"
+                      className="text-sm text-gray-400 flex items-center justify-center gap-1.5 cursor-pointer"
                     >
                       - {translation.author || fav.author}{" "}
                       <LuSquareArrowOutUpRight size={13} />
                     </a>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={handleTranslate}
-                      className="transition-transform hover:scale-110 active:scale-95 rounded-full cursor-pointer p-1 hover:bg-blue-500/20"
-                      disabled={isTranslating}
-                      title={
-                        hasTranslation
-                          ? "Clear translation"
-                          : "Translate to Persian"
-                      }
-                    >
-                      {isTranslating ? (
-                        <Loader size="small" />
-                      ) : (
-                        <FaLanguage
-                          size={16}
-                          className={
-                            hasTranslation ? "text-blue-500" : "text-gray-500"
-                          }
+                    <div>
+                      <button
+                        onClick={handleTranslate}
+                        className="transition-transform hover:scale-110 active:scale-95 rounded-full cursor-pointer p-1 hover:bg-blue-500/20"
+                        disabled={isTranslating}
+                        title={
+                          hasTranslation
+                            ? "Clear translation"
+                            : "Translate to Persian"
+                        }
+                      >
+                        {isTranslating ? (
+                          <Loader size="small" />
+                        ) : (
+                          <IoLanguage
+                            size={20}
+                            className={
+                              hasTranslation ? "text-blue-500" : "text-gray-500"
+                            }
+                          />
+                        )}
+                      </button>
+                      <button
+                        title="Remove"
+                        onClick={() => toggleFavorite(fav)}
+                        className="transition-transform hover:scale-110 active:scale-95 rounded-full cursor-pointer p-1 hover:bg-red-500/20"
+                      >
+                        <TiDeleteOutline
+                          size={22}
+                          className="text-red-500 rounded-full"
                         />
-                      )}
-                    </button>
-                    <button
-                      onClick={() => toggleFavorite(fav)}
-                      className="px-2 py-1 bg-red-500 text-white rounded-md hover:scale-105 transition text-sm cursor-pointer hidden sm:block"
-                    >
-                      Remove
-                    </button>
-                    <button
-                      onClick={() => toggleFavorite(fav)}
-                      className="hover:scale-110 transition cursor-pointer sm:hidden"
-                    >
-                      <TiDeleteOutline
-                        size={20}
-                        className="text-red-500  rounded-full"
-                      />
-                    </button>
+                      </button>
+                    </div>
                   </div>
                 </div>
               );
