@@ -1,25 +1,72 @@
 import useFavorites from "./useFavorites";
+import useTranslate from "../hooks/useTranslate";
 import { LuSquareArrowOutUpRight } from "react-icons/lu";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
+import { FaLanguage } from "react-icons/fa6";
 import Loader from "./Loader";
+import { useEffect } from "react";
 
 const QuoteCard = ({ quote, author, loading }) => {
   const { favorites, toggleFavorite } = useFavorites();
+  const {
+    translation,
+    isTranslating,
+    translationError,
+    isTranslationEnabled,
+    isContentReady,
+    clearTranslation,
+    toggleTranslation,
+    autoTranslateIfEnabled,
+    shouldShowContent,
+  } = useTranslate();
   const isFavorite = favorites.some((fav) => fav.content === quote);
+
+  // Clear translation when quote changes
+  useEffect(() => {
+    if (!quote && (translation.quote || translation.author)) {
+      clearTranslation();
+    }
+  }, [quote, translation, clearTranslation]);
+
+  // Auto-translate new quote and author if translation was previously enabled
+  useEffect(() => {
+    if (quote && !loading && isTranslationEnabled) {
+      autoTranslateIfEnabled(quote, author);
+    }
+  }, [quote, author, loading, isTranslationEnabled, autoTranslateIfEnabled]);
+
+  // Determine if content should be shown
+  const showContent = shouldShowContent();
+  const showLoader = loading || (isTranslationEnabled && !isContentReady);
+
+  const handleTranslate = () => {
+    if (quote || author) {
+      toggleTranslation(quote, author);
+    }
+  };
 
   return (
     <div
       className={`bg-neutral-900 shadow-lg rounded-lg p-4 mx-auto w-full h-full flex flex-col space-y-4 
-        ${loading ? "justify-center" : "justify-between"}`}
+        ${showLoader ? "justify-center" : "justify-between"}`}
     >
-      {loading ? (
+      {showLoader ? (
         <div className="flex justify-center items-center h-20">
           <Loader />
         </div>
       ) : (
         <>
           <div className="h-full flex items-center justify-center text-center">
-            {quote ? (
+            {showContent ? (
+              <div className="space-y-2">
+                <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold text-gray-200 max-h-56 overflow-y-auto scrollbar-hidden persian-text">
+                  "{translation.quote || quote}"
+                </p>
+                {translationError && (
+                  <p className="text-red-400 text-xs">{translationError}</p>
+                )}
+              </div>
+            ) : quote ? (
               <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold text-gray-200 max-h-56 overflow-y-auto scrollbar-hidden">
                 "{quote}"
               </p>
@@ -37,29 +84,59 @@ const QuoteCard = ({ quote, author, loading }) => {
               className={`text-gray-400 flex justify-center items-center gap-1.5 transition-transform hover:scale-105 active:scale-95 
                 ${!quote && "opacity-50 cursor-not-allowed"}`}
             >
-              - {author || "Unknown"}
+              - {translation.author || author || "Unknown"}
               <LuSquareArrowOutUpRight size={13} />
             </a>
-            <button
-              onClick={() =>
-                quote && toggleFavorite({ content: quote, author })
-              }
-              className="transition-transform hover:scale-110 active:scale-95 rounded-full cursor-pointer"
-              disabled={!quote}
-            >
-              {isFavorite ? (
-                <FaHeart size={20} className="text-red-500" />
-              ) : (
-                <FaRegHeart
-                  size={20}
-                  className={`text-gray-500 ${
-                    quote
-                      ? "hover:text-red-500"
-                      : "opacity-50 cursor-not-allowed"
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleTranslate}
+                className={`transition-transform hover:scale-110 active:scale-95 rounded-full cursor-pointer p-1
+                  ${
+                    !quote
+                      ? "opacity-50 cursor-not-allowed"
+                      : "hover:bg-blue-500/20"
                   }`}
-                />
-              )}
-            </button>
+                disabled={!quote || showLoader}
+                title={
+                  translation.quote || translation.author
+                    ? "Clear translation"
+                    : "Translate to Persian"
+                }
+              >
+                {isTranslating ? (
+                  <Loader size="small" />
+                ) : (
+                  <FaLanguage
+                    size={18}
+                    className={`${
+                      translation.quote || translation.author
+                        ? "text-blue-500"
+                        : "text-gray-500"
+                    }`}
+                  />
+                )}
+              </button>
+              <button
+                onClick={() =>
+                  quote && toggleFavorite({ content: quote, author })
+                }
+                className="transition-transform hover:scale-110 active:scale-95 rounded-full cursor-pointer"
+                disabled={!quote}
+              >
+                {isFavorite ? (
+                  <FaHeart size={20} className="text-red-500" />
+                ) : (
+                  <FaRegHeart
+                    size={20}
+                    className={`text-gray-500 ${
+                      quote
+                        ? "hover:text-red-500"
+                        : "opacity-50 cursor-not-allowed"
+                    }`}
+                  />
+                )}
+              </button>
+            </div>
           </div>
         </>
       )}
