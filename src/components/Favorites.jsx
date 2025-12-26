@@ -1,13 +1,23 @@
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import useFavorites from "./useFavorites";
+import useFavoriteTranslations from "../hooks/useFavoriteTranslations";
 import { Link } from "react-router-dom";
 import { HiOutlineArrowLeft } from "react-icons/hi";
 import { TiDeleteOutline } from "react-icons/ti";
 import { LuSquareArrowOutUpRight } from "react-icons/lu";
+import { FaLanguage } from "react-icons/fa6";
+import Loader from "./Loader";
 
 const Favorites = () => {
   const { favorites, toggleFavorite } = useFavorites();
+  const {
+    toggleFavoriteTranslation,
+    getFavoriteTranslation,
+    isFavoriteTranslating,
+    getFavoriteTranslationError,
+    hasFavoriteTranslation,
+  } = useFavoriteTranslations();
 
   return (
     <div className="h-screen w-screen bg-neutral-900 flex justify-center items-center p-4 md:py-12 sm:py-8 ">
@@ -24,39 +34,82 @@ const Favorites = () => {
 
         {favorites.length > 0 ? (
           <div className="m-3 space-y-3">
-            {favorites.map((fav, index) => (
-              <div
-                key={index}
-                className="bg-neutral-900 rounded-md p-2 gap-2 flex justify-between items-start"
-              >
-                <div>
-                  <p className="text-gray-200 mb-1">"{fav.content}"</p>
-                  <a
-                    href={`https://en.wikipedia.org/wiki/${fav.author}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-gray-400 flex items-center gap-1.5 cursor-pointer"
-                  >
-                    - {fav.author} <LuSquareArrowOutUpRight size={13} />
-                  </a>
+            {favorites.map((fav, index) => {
+              const favoriteId = `${fav.content}-${fav.author}`;
+              const translation = getFavoriteTranslation(favoriteId);
+              const isTranslating = isFavoriteTranslating(favoriteId);
+              const translationError = getFavoriteTranslationError(favoriteId);
+              const hasTranslation = hasFavoriteTranslation(favoriteId);
+
+              const handleTranslate = () => {
+                toggleFavoriteTranslation(favoriteId, fav.content, fav.author);
+              };
+
+              return (
+                <div
+                  key={index}
+                  className="bg-neutral-900 rounded-md p-2 gap-2 flex justify-between items-start"
+                >
+                  <div className="flex-1">
+                    <p className="text-gray-200 mb-1 persian-text">
+                      "{translation.quote || fav.content}"
+                    </p>
+                    {translationError && (
+                      <p className="text-red-400 text-xs mb-1">
+                        {translationError}
+                      </p>
+                    )}
+                    <a
+                      href={`https://en.wikipedia.org/wiki/${fav.author}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-gray-400 flex items-center gap-1.5 cursor-pointer"
+                    >
+                      - {translation.author || fav.author}{" "}
+                      <LuSquareArrowOutUpRight size={13} />
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handleTranslate}
+                      className="transition-transform hover:scale-110 active:scale-95 rounded-full cursor-pointer p-1 hover:bg-blue-500/20"
+                      disabled={isTranslating}
+                      title={
+                        hasTranslation
+                          ? "Clear translation"
+                          : "Translate to Persian"
+                      }
+                    >
+                      {isTranslating ? (
+                        <Loader size="small" />
+                      ) : (
+                        <FaLanguage
+                          size={16}
+                          className={
+                            hasTranslation ? "text-blue-500" : "text-gray-500"
+                          }
+                        />
+                      )}
+                    </button>
+                    <button
+                      onClick={() => toggleFavorite(fav)}
+                      className="px-2 py-1 bg-red-500 text-white rounded-md hover:scale-105 transition text-sm cursor-pointer hidden sm:block"
+                    >
+                      Remove
+                    </button>
+                    <button
+                      onClick={() => toggleFavorite(fav)}
+                      className="hover:scale-110 transition cursor-pointer sm:hidden"
+                    >
+                      <TiDeleteOutline
+                        size={20}
+                        className="text-red-500  rounded-full"
+                      />
+                    </button>
+                  </div>
                 </div>
-                <button
-                  onClick={() => toggleFavorite(fav)}
-                  className="px-2 py-1 bg-red-500 text-white rounded-md hover:scale-105 transition text-sm cursor-pointer hidden sm:block"
-                >
-                  Remove
-                </button>
-                <button
-                  onClick={() => toggleFavorite(fav)}
-                  className="hover:scale-110 transition cursor-pointer sm:hidden"
-                >
-                  <TiDeleteOutline
-                    size={20}
-                    className="text-red-500  rounded-full"
-                  />
-                </button>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
